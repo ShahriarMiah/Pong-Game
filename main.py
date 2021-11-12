@@ -1,9 +1,10 @@
 import pygame
 import time
-from Player import Player
-from Ball import Ball1
-from Score import ScoreClass
+from Blocks import Block
 from Menu import Menu
+from Ball import BallClass
+from Player import Player
+import math
 
 pygame.init()
 
@@ -11,13 +12,33 @@ Window = pygame.display.set_mode((500, 780))
 menu = Menu(Window, pygame.font.Font("Caramel Sweets.ttf", 80), pygame.font.Font("Caramel Sweets.ttf", 60),
             pygame.font.Font("Caramel Sweets.ttf", 35), pygame.font.Font("Caramel Sweets.ttf", 22))
 pygame.display.set_caption("4 Player Pong")
+background = pygame.image.load("Backgrounds.jpg")
+block1 = Block(200, 200, 64, 64, 0)
 Gameover = True
 mainMenu = False
 running = True
 click = False
+gamesPlayed = True
+P1score = 0
+P2score = 0
+
+
+def showscore(self):
+    font = pygame.font.Font("Caramel Sweets.ttf", 32)
+    score_rend = font.render(str(P1score), True, (255, 255, 255))
+    Window.blit(score_rend, (10, 10))
+    score_rend2 = font.render(str(P2score), True, (255, 255, 255))
+    Window.blit(score_rend2, (10, 730))
+
+
+if gamesPlayed:
+    Player1 = Player(200, 699, 128, 4, pygame.K_LEFT, pygame.K_RIGHT)
+    Player2 = Player(200, -44, 128, 4, pygame.K_a, pygame.K_d)
+    Ball1 = BallClass(250, 600, 6, 6, 6, 45, "Left")
 while running:
     pygame.time.delay(5)
-    Window.fill((255, 255, 255))
+    Window.fill((0, 0, 0))
+    Window.blit(background, (-50, -65))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -28,47 +49,48 @@ while running:
         if Gameover:
             Player1 = Player(200, 699, 128, 4, pygame.K_LEFT, pygame.K_RIGHT)
             Player2 = Player(200, -44, 128, 4, pygame.K_a, pygame.K_d)
-            Score1 = ScoreClass(10, 10, 0, pygame.font.Font("Caramel Sweets.ttf", 32))
-            Score2 = ScoreClass(10, 730, 0, pygame.font.Font("Caramel Sweets.ttf", 40))
+            Ball1.Y = 250
+            Ball1.X = 250
+            gamesPLayed = False
             menu.StartGame()
             Gameover = False
-        # Checks if the ball hits the wall
-        if Ball1.Y >= 720:
-            if Player1.collision(Ball1.X, Ball1.VelY):
-                Ball1.VelY = -abs(Ball1.VelY)
-        elif Ball1.Y <= 30:
-            if Player2.collision(Ball1.X, Ball1.VelY):
-                Ball1.VelY = abs(Ball1.VelY)
-        # Checks if the player has missed the ball and changes score
         if Ball1.Y <= 0:
-            Ball1.X = 200
-            Ball1.Y = 350
-            time.sleep(0.3)
-            Score2.addscore()
-        elif Ball1.Y >= 750:
-            Ball1.X = 200
-            Ball1.Y = 350
-            time.sleep(0.3)
-            Score1.addscore()
-        if Score1.score == 5:
+            P2score += 1
+        elif Ball1.Y + 32 >= 780:
+            P1score += 1
+        # Checks if the ball hits the wall
+        if Player1.X < Ball1.X < Player1.X + Player1.Width:
+            Ball1.playerCollision()
+        elif Player2.X < Ball1.X < Player2.X + Player2.Width:
+            Ball1.playerCollision()
+        if block1.Y < Ball1.Y < block1.Y + 62:
+            block1.blockCollision()
+
+        if P1score == 5:
             font2 = pygame.font.Font("Caramel Sweets.ttf", 50)
-            Window.blit(font2.render("Player 2 has won!! ", True, (0, 0, 0)), [25, 320])
+            Window.blit(font2.render("Player 2 has won!! ", True, (255, 255, 255)), [25, 320])
             pygame.display.flip()
             time.sleep(2)
+            P2score = 0
+            P1score = 0
             Gameover = True
-        if Score2.score == 5:
+        if P2score == 5:
             font2 = pygame.font.Font("Caramel Sweets.ttf", 50)
-            Window.blit(font2.render("Player 1 has won!! ", True, (0, 0, 0)), [25, 320])
+            Window.blit(font2.render("Player 1 has won!! ", True, (255, 255, 255)), [25, 320])
             pygame.display.flip()
             time.sleep(2)
+            P2score = 0
+            P1score = 0
+            block1.checkHits = 0
             Gameover = True
-        Score1.showscore(Window)
-        Score2.showscore(Window)
+        showscore(Window)
         Player1.moveplayer(Window)
         Player2.moveplayer(Window)
         Ball1.ballmovement(Window)
+        block1.showBlock(Window)
     else:
         menu.mainmenu()
         mainMenu = True
     pygame.display.update()
 pygame.quit()
+
