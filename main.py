@@ -1,10 +1,10 @@
 import pygame
 import time
+import random
 from Blocks import Block
 from Menu import Menu
 from Ball import BallClass
 from Player import Player
-import math
 
 pygame.init()
 
@@ -13,7 +13,7 @@ menu = Menu(Window, pygame.font.Font("Caramel Sweets.ttf", 80), pygame.font.Font
             pygame.font.Font("Caramel Sweets.ttf", 35), pygame.font.Font("Caramel Sweets.ttf", 22))
 pygame.display.set_caption("4 Player Pong")
 background = pygame.image.load("Backgrounds.jpg")
-block1 = Block(200, 200, 64, 64, 0)
+
 Gameover = True
 mainMenu = False
 running = True
@@ -23,7 +23,7 @@ P1score = 0
 P2score = 0
 
 
-def showscore(self):
+def showscore():
     font = pygame.font.Font("Caramel Sweets.ttf", 32)
     score_rend = font.render(str(P1score), True, (255, 255, 255))
     Window.blit(score_rend, (10, 10))
@@ -34,7 +34,8 @@ def showscore(self):
 if gamesPlayed:
     Player1 = Player(200, 699, 128, 4, pygame.K_LEFT, pygame.K_RIGHT)
     Player2 = Player(200, -44, 128, 4, pygame.K_a, pygame.K_d)
-    Ball1 = BallClass(250, 600, 6, 6, 6, 45, "Left")
+    Ball1 = BallClass(250, 300, 7, 7, 7, 45, "Left")
+    block1 = Block(random.randint(64, 436), random.randint(150, 600), 64, 64, 0)
 while running:
     pygame.time.delay(5)
     Window.fill((0, 0, 0))
@@ -51,7 +52,7 @@ while running:
             Player2 = Player(200, -44, 128, 4, pygame.K_a, pygame.K_d)
             Ball1.Y = 250
             Ball1.X = 250
-            gamesPLayed = False
+            gamesPlayed = False
             menu.StartGame()
             Gameover = False
         if Ball1.Y <= 0:
@@ -63,8 +64,9 @@ while running:
             Ball1.playerCollision()
         elif Player2.X < Ball1.X < Player2.X + Player2.Width:
             Ball1.playerCollision()
-        if block1.Y < Ball1.Y < block1.Y + 62:
-            block1.blockCollision()
+        if block1.checkHits < 3:
+            if block1.Y < Ball1.Y < block1.Y + 62:
+                block1.blockCollision()
 
         if P1score == 5:
             font2 = pygame.font.Font("Caramel Sweets.ttf", 50)
@@ -73,6 +75,7 @@ while running:
             time.sleep(2)
             P2score = 0
             P1score = 0
+            block1.checkHits = 0
             Gameover = True
         if P2score == 5:
             font2 = pygame.font.Font("Caramel Sweets.ttf", 50)
@@ -83,11 +86,12 @@ while running:
             P1score = 0
             block1.checkHits = 0
             Gameover = True
-        showscore(Window)
+        showscore()
         Player1.moveplayer(Window)
         Player2.moveplayer(Window)
         Ball1.ballmovement(Window)
         block1.showBlock(Window)
+
     else:
         menu.mainmenu()
         mainMenu = True
