@@ -1,7 +1,5 @@
-import pygame
 import random
-
-
+import pygame
 
 
 
@@ -13,21 +11,14 @@ class Block:
         self.Width = Width
         self.checkHits = checkHits
 
-    def SpeedUp(self):
-        from main import Ball1
-        Ball1.VelX *= 2
-        Ball1.VelY *= 2
-        Ball1.Velocity *= 2
-
     def showBlock(self, Window):
+        from Powers import powers
         if self.checkHits < 3:
-            Window.blit(pygame.image.load("ball2.png"), (self.X, self.Y))
-        else:
-            self.X = random.randint(0, 500)
+            Window.blit(pygame.image.load("block.png"), (self.X, self.Y))
+        elif self.checkHits == 3:
+            self.X = random.randint(64, 436)
             self.Y = random.randint(100, 600)
-            self.SpeedUp()
-            self.checkHits = 0
-
+            powers.BallSpeedUp()
     def blockCollision(self):
         from main import Ball1
         if (self.X < Ball1.X < self.X + 62) or (self.X < Ball1.X + 32 < self.X + 62):
@@ -43,3 +34,4 @@ class Block:
         elif self.X < Ball1.X < self.X + 2 or self.X < Ball1.X + 32 < self.X + 2:
             Ball1.angle *= -1
             self.checkHits += 1
+
