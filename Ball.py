@@ -3,7 +3,7 @@ import math
 
 
 class BallClass:
-    def __init__(self, X, Y, VelX, VelY, Velocity, angle, check):
+    def __init__(self, X, Y, VelX, VelY, Velocity, angle, check, radius):
         self.X = X
         self.Y = Y
         self.VelX = VelX
@@ -11,8 +11,21 @@ class BallClass:
         self.Velocity = Velocity
         self.angle = angle
         self.check = check
+        self.radius = radius
 
-    def ballmovement(self, Window):
+    def draw(self, Window):
+        Window.blit(pygame.image.load("ball.png"), (self.X, self.Y))
+
+    def ballPath(self, startX, startY, power, ang, time):
+        velX = math.cos(ang) * power
+        velY = math.sin(ang) * power
+        distanceX = velX * time
+        distanceY = (velY * time) + ((-4.9 * time ** 2) / 2)
+        newX = round(distanceX + startX)
+        newY = round(startY - distanceY)
+        return newX, newY
+
+    def ballmovement(self, Window, p1, p2):
         Window.blit(pygame.image.load("ball.png"), (self.X, self.Y))
         # Calculating the speed of the ball dependent upon the angle
         # This will change once the ball hits the paddle
@@ -21,10 +34,10 @@ class BallClass:
 
         self.X += self.VelX
         self.Y += self.VelY
-        if self.X <= 0:
+        if self.X <= p1:
             self.check = "Left"
             self.angle = -1 * self.angle
-        elif self.X + 32 >= 500:
+        elif self.X + 32 >= p2:
             self.angle = -1 * self.angle
             self.check = "Right"
         elif self.Y <= 0:
@@ -32,9 +45,8 @@ class BallClass:
         elif self.Y + 32 >= 780:
             self.angle = 180 - self.angle
 
-    def playerCollision(self):
-        from main import Player1
-        from main import Player2
+    def playerCollision(self, Player1, Player2):
+
         if self.Y >= 720:
             if Player1.X < self.X < Player1.X + 10 or Player1.X < self.X + 32 < Player1.X + 10:
                 self.angle = -130
@@ -50,6 +62,9 @@ class BallClass:
                 self.angle = 175
             if Player1.X + 110 < self.X < Player1.X + 128 or Player1.X + 110 < self.X + 32 < Player1.X + 128:
                 self.angle = 160
+            if Player1.Length == 200:
+                if Player1.X + 128 < self.X < Player1.X + 200 or Player1.X + 128 < self.X < Player1.X + 200:
+                    self.angle = 160
         elif self.Y <= 30:
             if Player2.X < self.X < Player2.X + 10 or Player2.X < self.X + 32 < Player2.X + 10:
                 if self.check == "Left":
@@ -85,3 +100,7 @@ class BallClass:
                     self.angle = 40
                 else:
                     self.angle = -40
+            if Player2.Length == 200:
+                if Player2.X + 128 < self.X < Player2.X + 200 or Player2.X + 128 < self.X < Player2.X + 200:
+                    self.angle = 40
+
