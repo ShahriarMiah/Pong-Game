@@ -1,9 +1,11 @@
 import pygame
 import random
 
+tempTime = 0
+
 
 class Player:
-    def __init__(self, X, Y, Width, Length, Vel, Key1, Key2, set):
+    def __init__(self, X, Y, Width, Length, Vel, Key1, Key2, ):
         self.X = X
         self.Y = Y
         self.Width = Width
@@ -11,7 +13,7 @@ class Player:
         self.Vel = Vel
         self.Key1 = Key1
         self.Key2 = Key2
-        self.set = set
+        self.set = False
 
     def moveplayer(self, Window, State):
         pygame.draw.rect(Window, (255, 255, 255), (self.X, self.Y, self.Width, self.Length))
@@ -27,15 +29,16 @@ class Player:
             if keys[self.Key2] and self.X < 871:
                 self.X += self.Vel
 
-    def AImovement(self, Window):
+    def AImovement(self, Window, time):
         from AI import BallAI
+        global tempTime
         pygame.draw.rect(Window, (255, 255, 255), (self.X, self.Y, self.Width, self.Length))
-
+        probability = random.randint(1, 10)
         if BallAI.Y > 200 and 362 > self.X > 50:
             if not self.set:
-                self.X += self.Vel / 2
+                self.X += self.Vel / 1.5
             if self.set:
-                self.X -= self.Vel / 2
+                self.X -= self.Vel / 1.5
 
         if self.X >= 350:
             self.set = True
@@ -44,7 +47,25 @@ class Player:
             self.set = False
         if BallAI.Y < 200:
             if BallAI.X >= self.X and self.X < 371:
-                self.X += self.Vel / 1.5
+                self.X += self.Vel
             if BallAI.X < self.X > 0:
-                self.X -= self.Vel / 1.5
+                self.X -= self.Vel
+
+        if 0 < time % 8000 < 50 and probability > 2:
+            tempTime = time
+            self.Vel = 0
+        if time - tempTime > 1300:
+            self.Vel = 4
+
+    def Improved_AI_movement(self, coordinates, Window):
+        from AI import BallAI
+        pygame.draw.rect(Window, (255, 255, 255), (self.X, self.Y, self.Width, self.Length))
+        if BallAI.Y < 500:
+            try:
+                if self.X < coordinates and self.X < 371:
+                    self.X += self.Vel
+                elif self.X >= coordinates and self.X > 0:
+                    self.X -= self.Vel
+            except:
+                pass
 
