@@ -13,9 +13,9 @@ class PowerUps:
         self.currentTime = 0
 
     def BallSpeedUp(self, block):
-
+        #Checks which objects are in use
         if block == "B3":
-            from AI import BallAI,blockAI
+            from main import BallAI,blockAI
         else:
             from main import Ball1, Ball2, block1, block2
         if block == "B1":
@@ -46,7 +46,7 @@ class PowerUps:
     def IncreasePlayer(self, block):
 
         if block == "B3":
-            from AI import blockAI,Player1AI,Player2AI
+            from main import blockAI,Player1AI,Player2AI
         else:
             from main import Player1, Player2, Player3, Player4, block1, block2
         if block == "B1":
@@ -83,7 +83,7 @@ class PowerUps:
     def particleffect(self,screen,b):
 
         if b == "B3":
-            from AI import BallAI,blockAI,Window2
+            from main import BallAI,blockAI,Window2
         else:
             from main import Ball1, block1, Ball2, block2, Window
         if b == "B1":
@@ -109,6 +109,7 @@ class PowerUps:
                     particle1.add_particles(14, pygame.Color("Green"),a)
                     particle1.add_particles(18, pygame.Color("Blue"),a)
                     particle1.add_particles(22, pygame.Color("Purple"),a)
+        #Sets timer or power up
         if self.timer == 0:
             self.currentTime = pygame.time.get_ticks()
             self.timer +=1
@@ -123,4 +124,5 @@ class PowerUps:
 
 
 powers = PowerUps()
+
 
