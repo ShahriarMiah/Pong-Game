@@ -7,10 +7,11 @@ class Particle:
         self.update = "Nyan"
         self.size = 8
 
-    def emit(self,screen):
+    def emit(self, screen):
         if self.particles:
             self.delete_particles()
             for particle in self.particles:
+                #Slowly reduces size of particle to create effect
                 if self.update != "Nyan":
                     particle[0][1] += particle[2][1]
                     particle[0][0] += particle[2][0]
@@ -21,13 +22,11 @@ class Particle:
                 elif self.update == "Rectangles":
                     pygame.draw.rect(screen, (255, 255, 255),
                                      (particle[0][0], particle[0][1], int(particle[1]) + 8, int(particle[1]) + 8))
-
                 else:
-                    particle[0].x -=2
+                    particle[0].x -= 2
                     pygame.draw.rect(screen, particle[1], particle[0])
 
-
-    def add_particles(self, offset, colour,ball):
+    def add_particles(self, offset, colour, ball):
         if self.update != "Nyan":
             x = ball.X + 16
             y = ball.Y + 16
@@ -38,7 +37,7 @@ class Particle:
             self.particles.append(particle_circle)
         else:
 
-            x = ball.X +16
+            x = ball.X + 16
             y = ball.Y + offset
             particle_rect = pygame.Rect(int(x - self.size / 2), int(y - self.size / 2), self.size, self.size)
             self.particles.append((particle_rect, colour))
