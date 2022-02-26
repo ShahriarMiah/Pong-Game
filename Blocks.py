@@ -21,26 +21,34 @@ class Block:
 
     def showBlock(self, Window, b):
         from Powers import powers
-        if b != "B3":
+        if b == "B1":
             from main import Player1, Player2
+            player1 = Player1
+            player2 = Player2
+        elif b == "B2":
+            from main import Player3, Player4
+            player1 = Player3
+            player2 = Player4
+        else:
+            from main import Player1AI,Player2AI
+            player1 = Player1AI
+            player2 = Player2AI
+
         if self.checkHits < 3:
             Window.blit(pygame.image.load("block.png"), (self.X, self.Y))
         elif self.checkHits == 3:
-            if not self.poweractivated or b == "B3":
+            if not self.poweractivated:
                 if b == "B1" or b == "B3":
                     self.X = random.randint(64, 436)
                     self.Y = random.randint(100, 600)
                 else:
+                    #Second game requires different co-ordinate parameters
                     self.X = random.randint(564, 936)
                     self.Y = random.randint(100, 600)
-
+                #Power up choice selection
                 if self.Choice == 1:
-                    if b == "B1":
-                        powers.BallSpeedUp(b)
-                    elif b == "B2":
-                        powers.BallSpeedUp(b)
-                    else:
-                        powers.BallSpeedUp(b)
+                    powers.BallSpeedUp(b)
+
                 elif self.Choice == 0:
                     self.state = True
 
@@ -50,23 +58,20 @@ class Block:
                 elif self.Choice == 3:
                     self.magnet = True
                 else:
-                    if b == "B1":
-                        powers.IncreasePlayer("B1")
-                    elif b == "B2":
-                        powers.IncreasePlayer("B2")
-                    else:
-                        powers.IncreasePlayer("B3")
+                    powers.IncreasePlayer(b)
+
             else:
+                #Falling power up to check if user has obtained/activated power up
                 self.fallingPower(Window)
                 if self.player == 0:
-                    if Player1.X < self.power_x < Player1.X + Player1.Width:
+                    if player1.X < self.power_x < player1.X + player1.Width:
                         if self.power_y > 750:
                             self.player = random.randint(0, 1)
                             self.poweractivated = False
                     if self.power_y > 770:
                         self.checkHits = 0
                 elif self.player == 1:
-                    if Player2.X < self.power_x < Player2.X + Player2.Width:
+                    if player2.X < self.power_x < player2.X + player2.Width:
                         if self.power_y < 30:
                             self.player = random.randint(0, 1)
                             self.poweractivated = False
@@ -81,8 +86,9 @@ class Block:
             from main import Ball2
             ball = Ball2
         else:
-            from AI import BallAI
+            from main import BallAI
             ball = BallAI
+
         if (self.X < ball.X < self.X + 62) or (self.X < ball.X + 32 < self.X + 62):
             if self.Y < ball.Y < self.Y + 2:
                 ball.angle = 180 - ball.angle
